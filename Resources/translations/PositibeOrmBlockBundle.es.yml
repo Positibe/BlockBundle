@@ -1,0 +1,15 @@
+es: Español
+en: Inglés
+fr: Frances
+abstract_block:
+    form:
+        name_label: Nombre:
+        block_location_label: Ubicación:
+        publishable_label: Publicado
+        publish_start_label: Publicar a partir de:
+        publish_end_label: Despublicar en:
+simple_block:
+    form:
+        title_label: Título:
+        body_label: Contenido:
+        locale_label: Idioma:

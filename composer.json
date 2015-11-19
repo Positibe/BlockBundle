@@ -1,0 +1,38 @@
+{
+    "name": "positibe/orm-block-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony PositibeOrmBlockBundle",
+    "keywords": ["cmf","block", "positibe", "positibelabs"],
+    "homepage": "http://positibelabs.blogspot.com/bundles/block",
+    "license": "Private",
+    "version": "0.1.0.0",
+    "authors": [
+        {
+            "name": "Pedro Carlos Abreu Jiménez",
+            "email": "pcabreus@gmail.com",
+            "homepage": "https://github.com/pcabreus"
+        },
+        {
+            "name": "PositibeLabs Cooperative",
+            "homepage": "https://github.com/positibelabs"
+        }
+    ],
+    "require": {
+        "symfony/framework-bundle": "~2.3",
+        "gedmo/doctrine-extensions": "2.3.*",
+        "sonata-project/block-bundle": "~2.2",
+        "symfony-cmf/core-bundle": "1.2.*",
+        "positibe/publishable": "~0.1",
+        "positibe/orm-media-bundle": "~0.1",
+        "doctrine/orm": "~2.4"
+
+    },
+    "autoload": {
+        "psr-4": { "Positibe\\Bundle\\OrmBlockBundle\\": "" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
+}

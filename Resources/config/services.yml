@@ -1,0 +1,29 @@
+services:
+
+#### Form Types ####
+    positibe_orm_block.block_simple_form:
+        class: Positibe\Bundle\OrmBlockBundle\Form\Type\SimpleBlockType
+        arguments: [%locales%]
+        tags:
+            - { name: form.type, alias: positibe_simple_block }
+
+    positibe_orm_block.abstract_simple_form:
+        class: Positibe\Bundle\OrmBlockBundle\Form\Type\AbstractBlockType
+        arguments: [%block_locations%]
+        tags:
+            - { name: form.type, alias: positibe_abstract_block }
+
+#### Block Services ####
+    positibe_orm_block.block_simple:
+        class: Positibe\Bundle\OrmBlockBundle\Block\Service\SimpleBlockService
+        arguments: ['positibe_orm_block.block_simple', @templating]
+        tags:
+            - {name: sonata.block }
+
+#### Services and Utils ####
+    positibe_orm_block.orm_block_loader:
+        class: Positibe\Bundle\OrmBlockBundle\Block\Loader\OrmBlockLoader
+        arguments: [@doctrine.orm.entity_manager, @cmf_core.publish_workflow.checker, @logger]
+        tags:
+            - {name: sonata.block.loader }
+
