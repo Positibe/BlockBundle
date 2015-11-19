@@ -23,7 +23,6 @@
         "sonata-project/block-bundle": "~2.2",
         "symfony-cmf/core-bundle": "1.2.*",
         "positibe/publishable": "~0.1",
-        "positibe/orm-media-bundle": "~0.1",
         "doctrine/orm": "~2.4"
 
     },
