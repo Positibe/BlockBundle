@@ -54,7 +54,8 @@ class SimpleBlockType extends AbstractType
                     'attr' => array(
                         'rows' => 12,
                         'class' => 'inbox-editor inbox-wysihtml5'
-                    )
+                    ),
+                    'required' => false
                 )
             )
             ->add(
