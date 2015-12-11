@@ -12,6 +12,7 @@ namespace Positibe\Bundle\OrmBlockBundle\Block\Loader;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Positibe\Bundle\OrmBlockBundle\Block\Model\ContainerBlock;
 use Positibe\Bundle\OrmBlockBundle\Entity\Block;
 use Psr\Log\LoggerInterface;
 use Sonata\BlockBundle\Block\BlockLoaderInterface;
@@ -155,6 +156,7 @@ class OrmBlockLoader implements BlockLoaderInterface
     {
         if (empty($location)) {
             $this->log("The location passed to the block render is empty");
+
             return null;
         }
 
@@ -168,6 +170,21 @@ class OrmBlockLoader implements BlockLoaderInterface
 
             return null;
         }
+
+        if (isset($configuration['multiple']) && $configuration['multiple']) {
+            $containerBlock = new ContainerBlock();
+            /** @var Block $block */
+            foreach ($blocks as $block) {
+                if (!$this->authorizationChecker->isGranted('VIEW', $block)) {
+                    $this->log(sprintf("Block '%s' for the location '%s' is not published", $block->getName(), $location));
+                    continue;
+                }
+                $containerBlock->addChildren($block);
+            }
+
+            return $containerBlock;
+        }
+
         /** @var Block $block */
         foreach ($blocks as $block) {
             if (!$this->authorizationChecker->isGranted('VIEW', $block)) {
