@@ -19,7 +19,5 @@ namespace Positibe\Bundle\OrmBlockBundle\Entity;
  */
 interface BlockRepositoryInterface
 {
-    public function findBlockByName($name);
-
-    public function findBlocksByLocation($location);
-}
+    public function findByTemplatePosition($configuration);
+} 

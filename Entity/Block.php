@@ -16,7 +16,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * Block
  *
  * @ORM\Table(name="positibe_block")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Positibe\Bundle\OrmBlockBundle\Entity\BlockRepository")
  * @ORM\InheritanceType("JOINED")
  */
 class Block implements BlockInterface, PublishableInterface, PublishTimePeriodInterface, ChildInterface
@@ -44,10 +44,9 @@ class Block implements BlockInterface, PublishableInterface, PublishTimePeriodIn
     /**
      * @var string
      *
-     * @ORM\Column(name="block_location", type="string", length=255, nullable=TRUE)
-     * @Gedmo\SortableGroup
+     * @ORM\Column(name="template_position", type="string", length=255, nullable=TRUE)
      */
-    protected $blockLocation;
+    private $templatePosition;
 
     /**
      * @var integer
@@ -152,6 +151,24 @@ class Block implements BlockInterface, PublishableInterface, PublishTimePeriodIn
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Get the template position
+     *
+     * @return string|void
+     */
+    public function getTemplatePosition()
+    {
+        return $this->templatePosition;
+    }
+
+    /**
+     * @param string $templatePosition
+     */
+    public function setTemplatePosition($templatePosition)
+    {
+        $this->templatePosition = $templatePosition;
     }
 
     /**
@@ -414,21 +431,5 @@ class Block implements BlockInterface, PublishableInterface, PublishTimePeriodIn
     public function hasChildren()
     {
         return false;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBlockLocation()
-    {
-        return $this->blockLocation;
-    }
-
-    /**
-     * @param string $blockLocation
-     */
-    public function setBlockLocation($blockLocation)
-    {
-        $this->blockLocation = $blockLocation;
     }
 }

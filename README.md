@@ -20,11 +20,10 @@ Next, be sure to enable the bundles in your application kernel:
             // ...
             // Dependency (check that you don't already have this line)
             new Symfony\Cmf\Bundle\CoreBundle\CmfCoreBundle(),
-            new Knp\Bundle\MenuBundle\KnpMenuBundle(),
             new Sonata\CoreBundle\SonataCoreBundle(),
             // Vendor specifics bundles
             new Sonata\BlockBundle\SonataBlockBundle(),
-            new Positibe\Bundle\OrmMenuBundle\PositibeOrmBlockBundle(),
+            new Positibe\Bundle\OrmBlockBundle\PositibeOrmBlockBundle(),
 
             // ...
         );

@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Positibe\Bundle\OrmBlockBundle\Block\Model\ContainerBlock;
 use Positibe\Bundle\OrmBlockBundle\Entity\Block;
+use Positibe\Bundle\OrmBlockBundle\Entity\BlockRepositoryInterface;
 use Psr\Log\LoggerInterface;
 use Sonata\BlockBundle\Block\BlockLoaderInterface;
 use Sonata\BlockBundle\Model\BlockInterface;
@@ -90,8 +91,8 @@ class OrmBlockLoader implements BlockLoaderInterface
     {
         if (isset($configuration['name'])) {
             return $this->findBlockByName($configuration['name'], $configuration);
-        } elseif ($configuration['location']) {
-            return $this->findBlockByLocation($configuration['location'], $configuration);
+        } elseif ($configuration['template_position']) {
+            return $this->findBlockByTemplatePosition($configuration['template_position'], $configuration);
         } else {
             return null;
         }
@@ -104,13 +105,8 @@ class OrmBlockLoader implements BlockLoaderInterface
      */
     public function findBlockByName($name, $configuration)
     {
-        if (empty($name)) {
-            $this->log("The name passed to the block render is empty");
-
-            return null;
-        }
         /** @var Block $block */
-        $block = $this->getRepository()->findOneBy(array('name' => $name));
+        $block = $this->getRepository()->findOneByName($name);
 
         if (!$block) {
             $this->log(sprintf("The block with name '%s' was not found", $name));
@@ -123,6 +119,7 @@ class OrmBlockLoader implements BlockLoaderInterface
 
             return null;
         }
+
         $block->setSettings(isset($configuration['settings']) ? $configuration['settings'] : array());
 
         return $block;
@@ -148,26 +145,29 @@ class OrmBlockLoader implements BlockLoaderInterface
     }
 
     /**
-     * @param $location
+     * @param $template_position
      * @param $configuration
      * @return null|Block
      */
-    public function findBlockByLocation($location, $configuration)
+    public function findBlockByTemplatePosition($template_position, $configuration)
     {
-        if (empty($location)) {
-            $this->log("The location passed to the block render is empty");
+        if (empty($template_position)) {
+            $this->log("The template_position passed to the block render is empty");
 
             return null;
         }
 
-        $blocks = $this->getRepository()->findBy(
-            array('blockLocation' => $location),
-            array('position' => 'ASC', 'updatedAt' => 'DESC')
-        );
+        $repository = $this->getRepository();
+        if ($repository instanceof BlockRepositoryInterface) {
+            $blocks = $repository->findByTemplatePosition($configuration);
+        } else {
+            $blocks = $repository->findBy(
+                array('position' => 'ASC', 'updatedAt' => 'DESC')
+            );
+        }
 
         if (count($blocks) === 0) {
-            $this->log(sprintf("A block with location '%s' was not found", $location));
-
+            $this->log(sprintf("A block with template_position '%s' was not found", $template_position));
             return null;
         }
 
@@ -176,7 +176,9 @@ class OrmBlockLoader implements BlockLoaderInterface
             /** @var Block $block */
             foreach ($blocks as $block) {
                 if (!$this->authorizationChecker->isGranted('VIEW', $block)) {
-                    $this->log(sprintf("Block '%s' for the location '%s' is not published", $block->getName(), $location));
+                    $this->log(
+                        sprintf("Block '%s' for the template_position '%s' is not published", $block->getName(), $template_position)
+                    );
                     continue;
                 }
                 $containerBlock->addChildren($block);
@@ -188,14 +190,14 @@ class OrmBlockLoader implements BlockLoaderInterface
         /** @var Block $block */
         foreach ($blocks as $block) {
             if (!$this->authorizationChecker->isGranted('VIEW', $block)) {
-                $this->log(sprintf("Block '%s' for the location '%s' is not published", $block->getName(), $location));
+                $this->log(sprintf("Block '%s' for the template_position '%s' is not published", $block->getName(), $template_position));
                 continue;
             }
             $block->setSettings(isset($configuration['settings']) ? $configuration['settings'] : array());
 
             return $block;
         }
-        $this->log(sprintf("There is not Block for the location '%s' published", $block->getName(), $location));
+        $this->log(sprintf("There is not Block for the template_position '%s' published", $block->getName(), $template_position));
 
         return null;
 
@@ -211,7 +213,7 @@ class OrmBlockLoader implements BlockLoaderInterface
             return false;
         }
 
-        if (!(isset($configuration['name']) || isset($configuration['location']))) {
+        if (!(isset($configuration['name']) || isset($configuration['template_position']))) {
             return false;
         }
 

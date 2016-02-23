@@ -1,0 +1,7 @@
+positibe_orm_block_js_sync_cache:
+    path: /positibe-orm/block/cache/js-sync
+    defaults: { _controller: positibe_orm_block.block.cache.js_sync:cacheAction }
+
+positibe_orm_block_js_async_cache:
+    path: /positibe-orm/block/cache/js-async
+    defaults: { _controller: positibe_orm_block.block.cache.js_async:cacheAction }

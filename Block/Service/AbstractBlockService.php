@@ -24,7 +24,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  */
 abstract class AbstractBlockService extends BaseBlockService
 {
-
     protected $template = 'PositibeOrmBlockBundle:Block:block_simple.html.twig';
 
     /**

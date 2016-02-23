@@ -15,7 +15,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
+use Symfony\Component\Form\OptionsResolverInterface;
 
 /**
  * Class AbstractBlockType
@@ -25,18 +25,13 @@ use Symfony\Component\Form\FormEvents;
  */
 class AbstractBlockType extends AbstractType
 {
-    private $blockLocations;
-
-    public function __construct($blockLocations)
-    {
-        $this->blockLocations = $blockLocations;
-    }
+    protected $blockLocations;
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add(
-                'blockLocation',
+                'templatePosition',
                 'choice',
                 array(
                     'label' => 'abstract_block.form.block_location_label',
@@ -99,6 +94,32 @@ class AbstractBlockType extends AbstractType
                 }
             }
         );
+    }
+
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(
+            array(
+                'data_class' => 'Positibe\Bundle\OrmBlockBundle\Entity\Block'
+            )
+        );
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getBlockLocations()
+    {
+        return $this->blockLocations;
+    }
+
+    /**
+     * @param mixed $blockLocations
+     */
+    public function setBlockLocations($blockLocations)
+    {
+        $this->blockLocations = $blockLocations;
     }
 
 
