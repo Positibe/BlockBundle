@@ -38,9 +38,16 @@ class ActionBlockService extends BaseBlockService
      */
     public function execute(BlockContextInterface $blockContext, Response $response = null)
     {
+        //@fixme To load the resource controller of sylius with _sylius config.
         $controller = $this->createController($blockContext->getSetting('action'));
 
-        $response = call_user_func_array($controller, $blockContext->getSetting('parameters'));
+        $parameters = array_merge(
+            array('request' => $blockContext->getSetting('request')),
+            $blockContext->getSetting('parameters')
+        );
+
+        $response = call_user_func_array($controller, $parameters);
+        $response->setTtl($blockContext->getSetting('ttl'));
 
         return $response;
     }
@@ -94,9 +101,8 @@ class ActionBlockService extends BaseBlockService
         $resolver->setDefaults(
             array(
                 'action' => null,
-                'parameters' => array(
-                    'request' => $this->container->get('request_stack')->getMasterRequest()
-                )
+                'parameters' => array(),
+                'request' => $this->container->get('request_stack')->getMasterRequest()
             )
         );
     }
