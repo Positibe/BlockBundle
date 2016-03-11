@@ -58,6 +58,8 @@ abstract class AbstractBlockService extends BaseBlockService
             );
         }
 
+        $response->setTtl($blockContext->getSetting('ttl'));
+
         return $response;
     }
 
