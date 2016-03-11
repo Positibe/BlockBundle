@@ -31,11 +31,8 @@ abstract class AbstractBlockService extends BaseBlockService
      * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating
      * @param null $template
      */
-    public function __construct($name, $templating, $template = null)
+    public function __construct($name, $templating)
     {
-        if ($template) {
-            $this->template = $template;
-        }
         parent::__construct($name, $templating);
     }
 
