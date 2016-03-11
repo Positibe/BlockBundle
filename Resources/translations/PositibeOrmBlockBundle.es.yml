@@ -8,11 +8,3 @@ abstract_block:
         publishable_label: Publicado
         publish_start_label: Publicar a partir de:
         publish_end_label: Despublicar en:
-simple_block:
-    form:
-        title_label: Título:
-        body_label: Contenido:
-        locale_label: Idioma:
-block_location:
-    form:
-        template_position_label: Posición:

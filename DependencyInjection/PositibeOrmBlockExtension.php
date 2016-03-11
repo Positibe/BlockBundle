@@ -24,5 +24,8 @@ class PositibeOrmBlockExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+
+        $container->getDefinition('positibe_orm_block.abstract_simple_form')
+            ->addMethodCall('setTemplatePositions', array($config['template_positions']));
     }
 }

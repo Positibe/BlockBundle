@@ -2,8 +2,6 @@ services:
 #### Form Types ####
     positibe_orm_block.abstract_simple_form:
         class: Positibe\Bundle\OrmBlockBundle\Form\Type\AbstractBlockType
-        calls:
-            - [ setBlockLocations, [%block_locations%]]
         tags:
             - { name: form.type, alias: positibe_abstract_block }
 
