@@ -10,8 +10,11 @@
 
 namespace Positibe\Bundle\OrmBlockBundle\Block\Service;
 
+use Positibe\Bundle\OrmBlockBundle\Entity\Block;
 use Sonata\BlockBundle\Block\BaseBlockService;
 use Sonata\BlockBundle\Block\BlockContextInterface;
+use Sonata\BlockBundle\Model\BlockInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -25,15 +28,17 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 abstract class AbstractBlockService extends BaseBlockService
 {
     protected $template = 'PositibeOrmBlockBundle:Block:block_simple.html.twig';
+    protected $requestStack;
 
     /**
      * @param string $name
      * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating
-     * @param null $template
+     * @param RequestStack $requestStack
      */
-    public function __construct($name, $templating)
+    public function __construct($name, $templating, RequestStack $requestStack)
     {
         parent::__construct($name, $templating);
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -63,7 +68,8 @@ abstract class AbstractBlockService extends BaseBlockService
     {
         $resolver->setDefaults(
             array(
-                'template' => $this->template
+                'template' => $this->template,
+                'request' => false
             )
         );
     }
@@ -74,5 +80,17 @@ abstract class AbstractBlockService extends BaseBlockService
     public function setTemplate($template)
     {
         $this->template = $template;
+    }
+
+    /**
+     * @param BlockInterface|Block $block
+     * @return array
+     */
+    public function getCacheKeys(BlockInterface $block)
+    {
+        return array(
+            'block_id' => $block->getName(),
+            'request_uri' => $this->requestStack->getMasterRequest()->getRequestUri()
+        );
     }
 } 
