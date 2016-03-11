@@ -15,7 +15,6 @@ use Doctrine\ORM\EntityRepository;
 use Positibe\Bundle\OrmBlockBundle\Block\Model\ContainerBlock;
 use Positibe\Bundle\OrmBlockBundle\Entity\Block;
 use Positibe\Bundle\OrmBlockBundle\Entity\BlockRepositoryInterface;
-use Psr\Log\LoggerInterface;
 use Sonata\BlockBundle\Block\BlockLoaderInterface;
 use Sonata\BlockBundle\Model\BlockInterface;
 use Sonata\BlockBundle\Model\EmptyBlock;
@@ -39,24 +38,19 @@ class OrmBlockLoader implements BlockLoaderInterface
      * @var PublishWorkflowChecker
      */
     private $authorizationChecker;
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+
+    protected $blockClass = 'PositibeOrmBlockBundle:Block';
 
     /**
      * @param EntityManager $entityManager
      * @param PublishWorkflowChecker $authorizationChecker
-     * @param LoggerInterface $logger
      */
     public function __construct(
         EntityManager $entityManager,
-        PublishWorkflowChecker $authorizationChecker,
-        LoggerInterface $logger = null
+        PublishWorkflowChecker $authorizationChecker
     ) {
         $this->em = $entityManager;
         $this->authorizationChecker = $authorizationChecker;
-        $this->logger = $logger;
     }
 
     /**
@@ -109,13 +103,13 @@ class OrmBlockLoader implements BlockLoaderInterface
         $block = $this->getRepository()->findOneByName($name);
 
         if (!$block) {
-            $this->log(sprintf("The block with name '%s' was not found", $name));
+            //The block with name '%s' was not found", $name
 
             return null;
         }
 
         if (!$this->authorizationChecker->isGranted('VIEW', $block)) {
-            $this->log(sprintf("Block '%s' is not published", $block->getName()));
+            //Block '%s' is not published", $block->getName()
 
             return null;
         }
@@ -126,25 +120,6 @@ class OrmBlockLoader implements BlockLoaderInterface
     }
 
     /**
-     * @param $message
-     */
-    public function log($message)
-    {
-        if ($this->logger) {
-            $this->logger->debug($message);
-        }
-    }
-
-    /**
-     * @param string $blockClassName
-     * @return EntityRepository
-     */
-    public function getRepository($blockClassName = 'PositibeOrmBlockBundle:Block')
-    {
-        return $this->em->getRepository($blockClassName);
-    }
-
-    /**
      * @param $template_position
      * @param $configuration
      * @return null|Block
@@ -152,8 +127,7 @@ class OrmBlockLoader implements BlockLoaderInterface
     public function findBlockByTemplatePosition($template_position, $configuration)
     {
         if (empty($template_position)) {
-            $this->log("The template_position passed to the block render is empty");
-
+            //The template_position passed to the block render is empty
             return null;
         }
 
@@ -167,7 +141,7 @@ class OrmBlockLoader implements BlockLoaderInterface
         }
 
         if (count($blocks) === 0) {
-            $this->log(sprintf("A block with template_position '%s' was not found", $template_position));
+            //A block with template_position '%s' was not found", $template_position
             return null;
         }
 
@@ -176,9 +150,7 @@ class OrmBlockLoader implements BlockLoaderInterface
             /** @var Block $block */
             foreach ($blocks as $block) {
                 if (!$this->authorizationChecker->isGranted('VIEW', $block)) {
-                    $this->log(
-                        sprintf("Block '%s' for the template_position '%s' is not published", $block->getName(), $template_position)
-                    );
+                    //Block '%s' for the template_position '%s' is not published"
                     continue;
                 }
                 $containerBlock->addChildren($block);
@@ -190,17 +162,41 @@ class OrmBlockLoader implements BlockLoaderInterface
         /** @var Block $block */
         foreach ($blocks as $block) {
             if (!$this->authorizationChecker->isGranted('VIEW', $block)) {
-                $this->log(sprintf("Block '%s' for the template_position '%s' is not published", $block->getName(), $template_position));
+                //Block '%s' for the template_position '%s' is not published"
                 continue;
             }
             $block->setSettings(isset($configuration['settings']) ? $configuration['settings'] : array());
 
             return $block;
         }
-        $this->log(sprintf("There is not Block for the template_position '%s' published", $block->getName(), $template_position));
-
+        ///There is not Block for the template_position '%s' published"
         return null;
 
+    }
+
+    /**
+     * @return string
+     */
+    public function getBlockClass()
+    {
+        return $this->blockClass;
+    }
+
+    /**
+     * @param string $blockClass
+     */
+    public function setBlockClass($blockClass)
+    {
+        $this->blockClass = $blockClass;
+    }
+
+    /**
+     * @param string $blockClassName
+     * @return EntityRepository
+     */
+    public function getRepository($blockClassName = null)
+    {
+        return $this->em->getRepository($blockClassName !== null ? $blockClassName : $this->blockClass);
     }
 
     /**

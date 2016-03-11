@@ -17,7 +17,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *
  * @ORM\Table(name="positibe_block")
  * @ORM\Entity(repositoryClass="Positibe\Bundle\OrmBlockBundle\Entity\BlockRepository")
- * @ORM\InheritanceType("JOINED")
+ * @ORM\InheritanceType("SINGLE_TABLE")
  */
 class Block implements BlockInterface, PublishableInterface, PublishTimePeriodInterface, ChildInterface
 {

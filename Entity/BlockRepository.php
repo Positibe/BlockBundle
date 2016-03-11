@@ -24,8 +24,8 @@ class BlockRepository extends EntityRepository implements BlockRepositoryInterfa
     public function findByTemplatePosition($configuration)
     {
         $qb = $this->createQueryBuilder('o')
-            ->orderBy('position', 'ASC')
-            ->orderBy('updatedAt', 'DESC');
+            ->orderBy('o.position', 'ASC')
+            ->orderBy('o.updatedAt', 'DESC');
 
         if (isset($configuration['template_position'])) {
             $qb->where('o.templatePosition = :templatePosition')->setParameter(
