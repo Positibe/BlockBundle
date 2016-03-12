@@ -11,12 +11,9 @@
 namespace Positibe\Bundle\OrmBlockBundle\Block\Loader;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 use Positibe\Bundle\OrmBlockBundle\Block\Model\ContainerBlock;
 use Positibe\Bundle\OrmBlockBundle\Entity\Block;
-use Positibe\Bundle\OrmBlockBundle\Entity\BlockRepositoryInterface;
 use Sonata\BlockBundle\Block\BlockLoaderInterface;
-use Sonata\BlockBundle\Model\BlockInterface;
 use Sonata\BlockBundle\Model\EmptyBlock;
 use Symfony\Cmf\Bundle\CoreBundle\PublishWorkflow\PublishWorkflowChecker;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
@@ -88,7 +85,7 @@ class OrmBlockLoader implements BlockLoaderInterface
 
     /**
      * @param $configuration
-     * @return null|BlockInterface
+     * @return null|Block
      */
     public function findBlock($configuration)
     {
@@ -102,7 +99,6 @@ class OrmBlockLoader implements BlockLoaderInterface
     }
 
     /**
-     * @param $name
      * @param $configuration
      * @return null|Block
      */
@@ -193,7 +189,7 @@ class OrmBlockLoader implements BlockLoaderInterface
 
     /**
      * @param string $blockClassName
-     * @return BlockRepositoryInterface|EntityRepository
+     * @return \Positibe\Bundle\OrmBlockBundle\Entity\BlockRepositoryInterface|\Doctrine\ORM\EntityRepository
      */
     public function getRepository($blockClassName = null)
     {
