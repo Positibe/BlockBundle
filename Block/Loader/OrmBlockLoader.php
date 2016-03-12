@@ -19,6 +19,7 @@ use Sonata\BlockBundle\Block\BlockLoaderInterface;
 use Sonata\BlockBundle\Model\BlockInterface;
 use Sonata\BlockBundle\Model\EmptyBlock;
 use Symfony\Cmf\Bundle\CoreBundle\PublishWorkflow\PublishWorkflowChecker;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 
 /**
@@ -39,18 +40,26 @@ class OrmBlockLoader implements BlockLoaderInterface
      */
     private $authorizationChecker;
 
+    /**
+     * @var AuthorizationChecker
+     */
+    private $authorizationSecurityChecker;
+
     protected $blockClass = 'PositibeOrmBlockBundle:Block';
 
     /**
      * @param EntityManager $entityManager
      * @param PublishWorkflowChecker $authorizationChecker
+     * @param AuthorizationChecker $authorizationSecurityChecker
      */
     public function __construct(
         EntityManager $entityManager,
-        PublishWorkflowChecker $authorizationChecker
+        PublishWorkflowChecker $authorizationChecker,
+        AuthorizationChecker $authorizationSecurityChecker
     ) {
         $this->em = $entityManager;
         $this->authorizationChecker = $authorizationChecker;
+        $this->authorizationSecurityChecker = $authorizationSecurityChecker;
     }
 
     /**
@@ -84,9 +93,9 @@ class OrmBlockLoader implements BlockLoaderInterface
     public function findBlock($configuration)
     {
         if (isset($configuration['name'])) {
-            return $this->findBlockByName($configuration['name'], $configuration);
+            return $this->findBlockByName($configuration);
         } elseif ($configuration['template_position']) {
-            return $this->findBlockByTemplatePosition($configuration['template_position'], $configuration);
+            return $this->findBlockByTemplatePosition($configuration);
         } else {
             return null;
         }
@@ -97,20 +106,18 @@ class OrmBlockLoader implements BlockLoaderInterface
      * @param $configuration
      * @return null|Block
      */
-    public function findBlockByName($name, $configuration)
+    public function findBlockByName($configuration)
     {
         /** @var Block $block */
-        $block = $this->getRepository()->findOneByName($name);
+        $block = $this->getRepository()->findOneBy(array('name' => $configuration['name']));
 
         if (!$block) {
             //The block with name '%s' was not found", $name
-
             return null;
         }
 
-        if (!$this->authorizationChecker->isGranted('VIEW', $block)) {
+        if (!$this->isGranted($block)) {
             //Block '%s' is not published", $block->getName()
-
             return null;
         }
 
@@ -120,36 +127,18 @@ class OrmBlockLoader implements BlockLoaderInterface
     }
 
     /**
-     * @param $template_position
      * @param $configuration
      * @return null|Block
      */
-    public function findBlockByTemplatePosition($template_position, $configuration)
+    public function findBlockByTemplatePosition($configuration)
     {
-        if (empty($template_position)) {
-            //The template_position passed to the block render is empty
-            return null;
-        }
-
-        $repository = $this->getRepository();
-        if ($repository instanceof BlockRepositoryInterface) {
-            $blocks = $repository->findByTemplatePosition($configuration);
-        } else {
-            $blocks = $repository->findBy(
-                array('position' => 'ASC', 'updatedAt' => 'DESC')
-            );
-        }
-
-        if (count($blocks) === 0) {
-            //A block with template_position '%s' was not found", $template_position
-            return null;
-        }
+        $blocks = $this->getRepository()->findByTemplatePosition($configuration);
 
         if (isset($configuration['multiple']) && $configuration['multiple']) {
             $containerBlock = new ContainerBlock();
             /** @var Block $block */
             foreach ($blocks as $block) {
-                if (!$this->authorizationChecker->isGranted('VIEW', $block)) {
+                if (!$this->isGranted($block)) {
                     //Block '%s' for the template_position '%s' is not published"
                     continue;
                 }
@@ -161,7 +150,7 @@ class OrmBlockLoader implements BlockLoaderInterface
 
         /** @var Block $block */
         foreach ($blocks as $block) {
-            if (!$this->authorizationChecker->isGranted('VIEW', $block)) {
+            if (!$this->isGranted($block)) {
                 //Block '%s' for the template_position '%s' is not published"
                 continue;
             }
@@ -169,9 +158,21 @@ class OrmBlockLoader implements BlockLoaderInterface
 
             return $block;
         }
-        ///There is not Block for the template_position '%s' published"
+
+        //There is not Block for the template_position '%s' published"
         return null;
 
+    }
+
+    /**
+     * @param Block $block
+     * @return bool
+     */
+    public function isGranted(Block $block)
+    {
+        return
+            $this->authorizationChecker->isGranted('VIEW', $block) &&
+            count($block->getRoles()) === 0 ? true : $this->authorizationSecurityChecker->isGranted($block->getRoles());
     }
 
     /**
@@ -192,7 +193,7 @@ class OrmBlockLoader implements BlockLoaderInterface
 
     /**
      * @param string $blockClassName
-     * @return EntityRepository
+     * @return BlockRepositoryInterface|EntityRepository
      */
     public function getRepository($blockClassName = null)
     {
@@ -215,5 +216,4 @@ class OrmBlockLoader implements BlockLoaderInterface
 
         return true;
     }
-
 } 

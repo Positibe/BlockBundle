@@ -49,6 +49,20 @@ class Block implements BlockInterface, PublishableInterface, PublishTimePeriodIn
     private $templatePosition;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="always", type="boolean")
+     */
+    protected $always;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="roles", type="array")
+     */
+    protected $roles;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="position", type="integer")
@@ -169,6 +183,38 @@ class Block implements BlockInterface, PublishableInterface, PublishTimePeriodIn
     public function setTemplatePosition($templatePosition)
     {
         $this->templatePosition = $templatePosition;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isAlways()
+    {
+        return $this->always;
+    }
+
+    /**
+     * @param boolean $always
+     */
+    public function setAlways($always)
+    {
+        $this->always = $always;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param array $roles
+     */
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
     }
 
     /**

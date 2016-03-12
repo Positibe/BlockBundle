@@ -17,7 +17,7 @@ services:
 #### Services and Utils ####
     positibe_orm_block.orm_block_loader:
         class: Positibe\Bundle\OrmBlockBundle\Block\Loader\OrmBlockLoader
-        arguments: [@doctrine.orm.entity_manager, @cmf_core.publish_workflow.checker]
+        arguments: [@doctrine.orm.entity_manager, @cmf_core.publish_workflow.checker, @security.authorization_checker]
         tags:
             - { name: sonata.block.loader }
 
