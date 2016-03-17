@@ -92,7 +92,8 @@ abstract class AbstractBlockService extends BaseBlockService
     {
         return array(
             'block_id' => $block->getName(),
-            'request_uri' => $this->requestStack->getMasterRequest()->getRequestUri()
+            'request_uri' => $this->requestStack->getMasterRequest()->getRequestUri(),
+            'request_locale' => $this->requestStack->getMasterRequest()->getLocale()
         );
     }
 } 
