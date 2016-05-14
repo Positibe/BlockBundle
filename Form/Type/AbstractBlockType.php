@@ -49,32 +49,31 @@ class AbstractBlockType extends AbstractType
                     'translation_domain' => 'PositibeOrmBlockBundle'
                 )
             )
-            ->add(
-                'publishStartDate',
-                'sonata_type_datetime_picker',
-                array(
-                    'dp_side_by_side' => true,
-                    'dp_use_seconds' => false,
-                    'required' => false,
-                    'label' => 'abstract_block.form.publish_start_label',
-                    'format' => 'EE, dd/MM/yyyy HH:mm',
-                    'dp_language' => 'es',
-                    'translation_domain' => 'PositibeOrmBlockBundle'
-                )
+          ->add(
+            'publishStartDate',
+            'datetime',
+            array(
+              'required' => false,
+              'label' => 'abstract_block.form.publish_start_label',
+              'translation_domain' => 'PositibeOrmBlockBundle',
+              'widget' => 'single_text',
+              'attr' => array('class' => 'datetime-picker'),
+              'format' => 'dd/MM/yyyy HH:mm'
             )
-            ->add(
-                'publishEndDate',
-                'sonata_type_datetime_picker',
-                array(
-                    'dp_side_by_side' => true,
-                    'dp_use_seconds' => false,
-                    'required' => false,
-                    'label' => 'abstract_block.form.publish_end_label',
-                    'format' => 'EE, dd/MM/yyyy HH:mm',
-                    'dp_language' => 'es',
-                    'translation_domain' => 'PositibeOrmBlockBundle'
-                )
-            );
+          )
+          ->add(
+            'publishEndDate',
+            'datetime',
+            array(
+
+              'label' => 'abstract_block.form.publish_end_label',
+              'translation_domain' => 'PositibeOrmBlockBundle',
+              'widget' => 'single_text',
+              'attr' => array('class' => 'datetime-picker'),
+              'format' => 'dd/MM/yyyy HH:mm',
+              'required' => false,
+            )
+          );
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
