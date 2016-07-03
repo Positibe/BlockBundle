@@ -4,8 +4,8 @@
     "description": "Symfony PositibeOrmBlockBundle",
     "keywords": ["cmf","block", "positibe", "positibelabs"],
     "homepage": "http://positibelabs.blogspot.com/bundles/block",
-    "license": "Private",
-    "version": "0.4.0.0",
+    "license": "MIT",
+    "version": "0.4.1.0",
     "authors": [
         {
             "name": "Pedro Carlos Abreu Jiménez",
